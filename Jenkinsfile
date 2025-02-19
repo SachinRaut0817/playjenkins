@@ -12,6 +12,7 @@ pipeline {
         container('kaniko') {
           script {
             sh '''
+            sleep 30
             /kaniko/executor --dockerfile `pwd`/Dockerfile \
                              --context `pwd` \
                              --destination=671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/kaniko-test:v0.3
