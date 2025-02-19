@@ -12,6 +12,12 @@ spec:
     seccompProfile:
       type: RuntimeDefault
   containers:
+  - name: jnlp
+    image: 671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/dockerhub/jenkins/inbound-agent:3248.v65ecb_254c298-6
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000  # ✅ Fix: Explicitly use a numeric UID
+      allowPrivilegeEscalation: false
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
     securityContext:
@@ -37,13 +43,7 @@ spec:
     }
 
     stages {
-        stage('Fix Permissions') {
-            steps {
-                script {
-                    sh "sleep 10"  // ⏳ Adding sleep to ensure permissions take effect
-                }
-            }
-        }
+        
 
         stage('Kaniko Build & Push Image') {
             steps {
