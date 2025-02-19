@@ -6,6 +6,12 @@ spec:
   containers: 
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
+    securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
     command:
     - /busybox/cat
     tty: true
