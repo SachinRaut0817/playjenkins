@@ -1,9 +1,4 @@
 pipeline {
-
-  options {
-    ansiColor('xterm')
-  }
-
   agent {
     kubernetes {
       yamlFile 'builder.yaml'
@@ -19,23 +14,11 @@ pipeline {
             sh '''
             /kaniko/executor --dockerfile `pwd`/Dockerfile \
                              --context `pwd` \
-                             --destination=justmeandopensource/myweb:${BUILD_NUMBER}
+                             --destination=671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/kaniko-test:v0.1
             '''
           }
         }
       }
-    }
-
-    stage('Deploy App to Kubernetes') {     
-      steps {
-        container('kubectl') {
-          withCredentials([file(credentialsId: 'mykubeconfig', variable: 'KUBECONFIG')]) {
-            sh 'sed -i "s/<TAG>/${BUILD_NUMBER}/" myweb.yaml'
-            sh 'kubectl apply -f myweb.yaml'
-          }
-        }
-      }
-    }
-  
+    } 
   }
 }
