@@ -1,2 +1,2 @@
-FROM httpd:2.4
-COPY ./index.html /usr/local/apache2/htdocs/
+FROM 671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/dockerhub/jenkins/inbound-agent:3248.v65ecb_254c298-6
+RUN echo "test"
