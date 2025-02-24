@@ -6,6 +6,14 @@ spec:
   containers: 
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
     command:
       - /busybox/cat
     tty: true
@@ -14,6 +22,14 @@ spec:
         mountPath: /kaniko/.docker
   - name: jnlp
     image: 671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/dockerhub/jenkins/inbound-agent:3248.v65ecb_254c298-6
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      seccompProfile:
+        type: RuntimeDefault
   volumes:
     - name: kaniko-secret
       secret:
