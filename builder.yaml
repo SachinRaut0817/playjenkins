@@ -6,10 +6,10 @@ spec:
   initContainers:
     - name: init-permissions
       image: busybox
-      command: ["sh", "-c", "sleep 30 && chmod -R 777 /kaniko"]
+      command: ["sh", "-c", "sleep 30 && chmod -R 777 /kaniko"]  # Applying chmod to writable /kaniko
       volumeMounts:
-        - name: kaniko-secret
-          mountPath: /kaniko/.docker
+        - name: kaniko-workspace  # Mounting writable workspace
+          mountPath: /kaniko
   containers: 
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
@@ -22,7 +22,10 @@ spec:
         fsGroup: 1000
       volumeMounts:
         - name: kaniko-secret
-          mountPath: /kaniko/.docker
+          mountPath: /kaniko/.docker  # Read-only secret mount
+          readOnly: true
+        - name: kaniko-workspace  # Writable workspace mount
+          mountPath: /kaniko
     - name: jnlp
       image: 671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/dockerhub/jenkins/inbound-agent:3248.v65ecb_254c298-6
   volumes:
@@ -32,3 +35,5 @@ spec:
         items:
           - key: .dockerconfigjson
             path: config.json
+    - name: kaniko-workspace  # Writable workspace volume
+      emptyDir: {}
