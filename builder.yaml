@@ -3,31 +3,17 @@ kind: Pod
 metadata:
   name: kaniko
 spec:
-  initContainers:
-    - name: init-permissions
-      image: busybox
-      command: ["sh", "-c", "sleep 30 && chmod -R 777 /kaniko"]  # Applying chmod to writable /kaniko
-      volumeMounts:
-        - name: kaniko-workspace  # Mounting writable workspace
-          mountPath: /kaniko
   containers: 
-    - name: kaniko
-      image: gcr.io/kaniko-project/executor:debug
-      command:
-        - /busybox/cat
-      tty: true
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-      volumeMounts:
-        - name: kaniko-secret
-          mountPath: /kaniko/.docker  # Read-only secret mount
-          readOnly: true
-        - name: kaniko-workspace  # Writable workspace mount
-          mountPath: /kaniko
-    - name: jnlp
-      image: 671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/dockerhub/jenkins/inbound-agent:3248.v65ecb_254c298-6
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command:
+      - /busybox/cat
+    tty: true
+    volumeMounts:
+      - name: kaniko-secret
+        mountPath: /kaniko/.docker
+  - name: jnlp
+    image: 671438781287.dkr.ecr.ap-southeast-1.amazonaws.com/dockerhub/jenkins/inbound-agent:3248.v65ecb_254c298-6
   volumes:
     - name: kaniko-secret
       secret:
@@ -35,5 +21,3 @@ spec:
         items:
           - key: .dockerconfigjson
             path: config.json
-    - name: kaniko-workspace  # Writable workspace volume
-      emptyDir: {}
